@@ -16,11 +16,13 @@ shedule = [['англи','захисту','історії','геометрії',
 ['фізики.1/геометрії.1','фізики.1/геометрії.2','геометрії.1/фізики.1','геометрії.2/фізики.2','англи','фіз-ри','укр літ'],
 ['інфи','хімії','історії','мови','фізики']]
 weekdays = ['Понеділок','Вівторок','Середа','Четвер','П\'ятниця','Субота','Неділя']
-duty=[
+duty=[[
 ['Катька,Демко,Писко'],['Соня,Ганя,Сагай'],
 ['Андрій,мокс,Влад'],['Мар\'я,Шумський,Доба'],
-['Вовчик,Кирилко,Пас,Уджас'],['Короп,Корсак,Віка,Аня']]
-duty1=[['Галя'],['Куспись'],['Папка'],['Устим'],['Шабат'],['Яник']]
+['Вовчик,Кирилко,Пас,Уджас'],['Короп,Корсак,Віка,Аня']
+],[['Галя'],['Куспись'],['Папка'],['Устим'],['Шабат'],['Яник']
+]]
+duty1=duty[-1]
 def w_time():
 	start = [[8,45],[9,40],[10,35],[11,40],[12,50],[14,0],[14,55],[0,0]]
 	end = [[9,30],[10,25],[11,20],[12,25],[13,35],[14,45],[15,40],[0,0]]
@@ -68,20 +70,20 @@ def time():
 def any_msg(m):
 	o = 0
 	keyboard = types.InlineKeyboardMarkup()
-	callback_button = types.InlineKeyboardButton(text="Час", callback_data="test")
+	callback_button = types.InlineKeyboardButton(text=" ", callback_data="test")
 	keyboard.add(callback_button)
 	bot.send_message(-1001158158821,'%s %s : %s'% (m.chat.first_name,m.chat.last_name,m.text))
 	bot.send_message(m.chat.id, '%s\n%s' % (time(),w_time()), reply_markup=keyboard)
-@bot.message_handler(commands=['duty'])
-def duty(m):
-	d,d1,t=duty,duty1,k
+@bot.message_handler(commands=['duty','d'])
+def dutys(m):
+	d,d1,t=duty[0],duty1,k
 	if k==5:
-		d[t]=d1[5]
+		d2[t]=d1[-1][5]
 	elif k==6:
-		d[t]='Помилка вводу\nСьогодні вихідний'
-	else:
-		d[t]='Сьогодні чергові %s' % d[t]
-	d=d[t]
+		d2[t]='Помилка вводу\nСьогодні вихідний'
+	elif k<5:
+		d2[t]='Сьогодні чергові %s' % d[t]
+	d=d2[t]
 	bot.send_message(m.chat.id,d)
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
@@ -89,11 +91,11 @@ def callback_inline(call):
 		if call.data == "test":
 			o = 0
 			keyboard = types.InlineKeyboardMarkup()
-			callback_button = types.InlineKeyboardButton(text="Час", callback_data="test")
+			callback_button = types.InlineKeyboardButton(text=" ", callback_data="test")
 			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-			text=time())
+			text='%s\n%s'%(time(),w_time()))
 			keyboard.add(callback_button)
 			bot.send_message(-1001158158821,'%s %s'% (call.message.chat.first_name,call.message.chat.last_name))
-			bot.send_message(call.message.chat.id, w_time(), reply_markup=keyboard)
+			bot.send_message(call.message.chat.id, 'Час', reply_markup=keyboard)
 if __name__ == '__main__':
 		bot.polling(none_stop=True)
